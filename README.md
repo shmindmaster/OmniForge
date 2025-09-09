@@ -117,6 +117,33 @@ This repository demonstrates:
 - Production-grade patterns: modular pipeline, deterministic unit tests, infra as code, containerized runtime.
 - Practical expertise: Computer vision (OpenCV), segmentation (YOLO→ONNX), and 3D modeling (Shapely/Trimesh).
 
+## Visual Overview (Product-style)
+
+<!-- Hero -->
+![2D to 3D millimeter-accurate pipeline](docs/banners/hero-1200x630.webp)
+
+<!-- Triptych -->
+![Input → Measured Overlay → STL](docs/showcase/triptych-input-overlay-stl.webp)
+
+<!-- KPI row -->
+<p align="center">
+  <img src="docs/kpi/accuracy-mm.webp" alt="Accuracy in millimeters" width="48%">
+  <img src="docs/kpi/latency.webp" alt="Latency by backend" width="48%">
+  
+</p>
+
+<!-- Architecture -->
+![Architecture: FastAPI + ONNX/Hosted + Azure](docs/diagrams/architecture.svg)
+
+<!-- UI -->
+<p align="center">
+  <img src="docs/ui/upload.webp" alt="Upload screen" width="48%">
+  <img src="docs/ui/results.webp" alt="Results screen with STL viewer" width="48%">
+  
+</p>
+
+> Download the 20 mm ArUco marker: [PNG](docs/markers/aruco-20mm.png) · [PDF](docs/markers/aruco-20mm.pdf)
+
 ## Commit Message Guidelines
 
 Use Conventional Commits to keep history clear and scannable:
