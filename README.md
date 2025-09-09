@@ -12,6 +12,7 @@ This project demonstrates an end-to-end solution for translating real-world, phy
 - Better UX: Supports interactive previews and returns downloadable artifacts (overlay, CSV, STL) within a single API call.
 
 Broader applications:
+
 - Manufacturing: Inline measurement and shape extraction for QA and defect detection.
 - Medical Devices: Custom prosthetics/orthotics based on patient imagery.
 - Dental: Designing crowns or aligners from intraoral images.
@@ -19,14 +20,14 @@ Broader applications:
 
 ## Technical Stack & Capabilities
 
-| Component | Description |
-| --- | --- |
-| Web Framework | FastAPI (Python) served via Gunicorn + Uvicorn for high-throughput async I/O |
-| Image Processing | OpenCV + NumPy with ArUco marker detection for real-world scaling |
-| Segmentation | YOLOv11 exported to ONNX; CPU-friendly `onnxruntime` inference; swappable hosted backend |
-| Geometry | Shapely for robust planar geometry; Trimesh for watertight STL export |
-| Cloud | Azure App Service (container) and Azure Blob Storage for durable artifacts |
-| DevOps | Docker, Azure Bicep (`infra/`), and `azure.yaml` for reproducible provisioning/deployment |
+| Component        | Description                                                                               |
+| ---------------- | ----------------------------------------------------------------------------------------- |
+| Web Framework    | FastAPI (Python) served via Gunicorn + Uvicorn for high-throughput async I/O              |
+| Image Processing | OpenCV + NumPy with ArUco marker detection for real-world scaling                         |
+| Segmentation     | YOLOv11 exported to ONNX; CPU-friendly `onnxruntime` inference; swappable hosted backend  |
+| Geometry         | Shapely for robust planar geometry; Trimesh for watertight STL export                     |
+| Cloud            | Azure App Service (container) and Azure Blob Storage for durable artifacts                |
+| DevOps           | Docker, Azure Bicep (`infra/`), and `azure.yaml` for reproducible provisioning/deployment |
 
 ## Architecture Overview
 
@@ -64,12 +65,12 @@ Broader applications:
 
 ## How It Works
 
-1) Upload image (with a 20 mm ArUco marker).
-2) Segment target region (YOLOv11-SEG ONNX or Roboflow Hosted).
-3) Compute `mm_per_px` from ArUco; fallback if not detected.
-4) Derive metrics via PCA along the principal axis (length, widths, area, sharpness).
-5) Render overlay PNG and build STL from densified outline.
-6) Upload artifacts to Azure Blob; return public URLs.
+1. Upload image (with a 20 mm ArUco marker).
+2. Segment target region (YOLOv11-SEG ONNX or Roboflow Hosted).
+3. Compute `mm_per_px` from ArUco; fallback if not detected.
+4. Derive metrics via PCA along the principal axis (length, widths, area, sharpness).
+5. Render overlay PNG and build STL from densified outline.
+6. Upload artifacts to Azure Blob; return public URLs.
 
 ## Local Development
 
@@ -113,6 +114,7 @@ pytest -q
 ## Project Positioning
 
 This repository demonstrates:
+
 - End-to-end pipeline implementation: upload → metrics → artifacts (PNG, CSV, STL).
 - Production-grade patterns: modular pipeline, deterministic unit tests, infra as code, containerized runtime.
 - Practical expertise: Computer vision (OpenCV), segmentation (YOLO→ONNX), and 3D modeling (Shapely/Trimesh).
@@ -120,33 +122,37 @@ This repository demonstrates:
 ## Visual Overview (Product-style)
 
 <!-- Hero -->
+
 ![2D to 3D millimeter-accurate pipeline](docs/banners/hero-1200x630.webp)
 
 <!-- Triptych -->
+
 ![Input → Measured Overlay → STL](docs/showcase/triptych-input-overlay-stl.webp)
 
 <!-- KPI row -->
 <p align="center">
   <img src="docs/kpi/accuracy-mm.webp" alt="Accuracy in millimeters" width="48%">
   <img src="docs/kpi/latency.webp" alt="Latency by backend" width="48%">
-  
+
 </p>
 
 <!-- Architecture -->
+
 ![Architecture: FastAPI + ONNX/Hosted + Azure](docs/diagrams/architecture.svg)
 
 <!-- UI -->
 <p align="center">
   <img src="docs/ui/upload.webp" alt="Upload screen" width="48%">
   <img src="docs/ui/results.webp" alt="Results screen with STL viewer" width="48%">
-  
+
 </p>
 
-> Download the 20 mm ArUco marker: [PNG](docs/markers/aruco-20mm.png) · [PDF](docs/markers/aruco-20mm.pdf)
+> Download the 20 mm ArUco marker: [PNG](app/static/markers/aruco_20mm.png) (print at 100% scale)
 
 ## Commit Message Guidelines
 
 Use Conventional Commits to keep history clear and scannable:
+
 - `feat:` new feature (e.g., `feat: Implement interactive web UI with 3D model viewer`)
 - `fix:` bug fix
 - `docs:` documentation or examples
@@ -155,6 +161,7 @@ Use Conventional Commits to keep history clear and scannable:
 - `build/chore:` tooling, CI, dependencies
 
 Suggested replacements for recent history:
+
 - `feat: Initialize core pipeline with FastAPI and Azure integrations`
 - `build: Establish foundational project structure and dependencies`
 - `feat: Implement interactive web UI with 3D model viewer`
