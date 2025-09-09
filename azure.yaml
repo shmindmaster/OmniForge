@@ -1,0 +1,16 @@
+name: im2fit
+infra:
+  provider: bicep
+services:
+  api:
+    project: .
+    language: python
+    host: appservice
+    docker:
+      path: .
+      file: Dockerfile
+    env:
+      USE_ONNX: 1
+      ENABLE_BLOB_UPLOAD: 1
+      STORAGE_CONTAINER: artifacts
+      APP_ENV: prod
