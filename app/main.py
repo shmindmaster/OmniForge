@@ -1,12 +1,15 @@
 import os, time, hashlib, threading
-from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request, Path
+from fastapi.responses import JSONResponse, HTMLResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from azure.storage.blob import BlobServiceClient, ContentSettings
 from .pipeline import run_pipeline
 
 BLOB_CONN = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 BLOB_CONTAINER = os.environ.get("BLOB_CONTAINER", "im2fit-outputs")
+PUBLIC_ARTIFACT_PROXY = os.environ.get("PUBLIC_ARTIFACT_PROXY", "0") == "1"
 
 if not BLOB_CONN:
     raise RuntimeError("AZURE_STORAGE_CONNECTION_STRING is not set")
@@ -17,10 +20,18 @@ if os.path.exists(os.environ.get("ONNX_MODEL_PATH", "model/best.onnx")):
         MODEL_HASH = hashlib.sha256(f.read()).hexdigest()[:16]
 
 app = FastAPI(title="im2fit Prototype", version="0.1")
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+# Setup Jinja2 templates
+templates = Jinja2Templates(directory="app/templates")
+
+# CORS for same-origin and localhost
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["*"],
+    allow_methods=["*"], 
     allow_headers=["*"],
 )
 
@@ -45,36 +56,42 @@ def version():
         return {"model_hash": MODEL_HASH, "ts": int(time.time())}
 
 @app.get("/")
-def index():
-        html = """
-    <html><head><title>im2fit</title></head>
-        <body>
-    <h1>im2fit Demo</h1>
-        <form id='f'>
-            <input type='file' name='file' accept='image/*'/>
-            <button type='submit'>Upload</button>
-        </form>
-        <pre id='out'></pre>
-        <script>
-        const f = document.getElementById('f');
-        f.addEventListener('submit', async (e)=>{
-            e.preventDefault();
-            const fd = new FormData(f);
-            const r = await fetch('/process', {method:'POST', body:fd});
-            const j = await r.json();
-            document.getElementById('out').textContent = JSON.stringify(j, null, 2);
-        });
-        </script>
-        <p><a href='/docs'>Swagger Docs</a></p>
-        </body></html>
-        """
-        return HTMLResponse(html)
+def index(request: Request):
+        return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/artifact/{name}")
+async def get_artifact(name: str = Path(...)):
+    """Server-side proxy to stream blobs when PUBLIC_ARTIFACT_PROXY=1"""
+    if not PUBLIC_ARTIFACT_PROXY:
+        raise HTTPException(status_code=404, detail="Artifact proxy disabled")
+    
+    try:
+        cc = _blob_client()
+        blob_client = cc.get_blob_client(name)
+        blob_data = blob_client.download_blob()
+        
+        # Get content type from blob properties
+        props = blob_client.get_blob_properties()
+        content_type = props.content_settings.content_type or "application/octet-stream"
+        
+        def iterfile():
+            for chunk in blob_data.chunks():
+                yield chunk
+                
+        return StreamingResponse(iterfile(), media_type=content_type)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=f"Artifact not found: {e}")
 
 @app.post("/process")
 async def process_image(file: UploadFile = File(...)):
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Upload an image file")
+    
     img_bytes = await file.read()
+    
+    # Enforce file size ≤ 5 MB
+    if len(img_bytes) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File size must be ≤ 5 MB")
 
     try:
         result = run_pipeline(img_bytes)  # overlay_png, csv_bytes, stl_bytes, metrics

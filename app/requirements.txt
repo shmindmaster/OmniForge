@@ -10,6 +10,5 @@ requests
 trimesh
 shapely
 azure-storage-blob
-ultralytics
 onnxruntime
-kaggle
+pyyaml
