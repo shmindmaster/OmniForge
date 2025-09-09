@@ -1,6 +1,11 @@
-import os, time, threading, requests, sys, json
+import os
+import time
+import threading
+import sys
+import json
 from pathlib import Path
 
+import requests
 def ensure_server():
     """Ensure uvicorn app.main:app --host 0.0.0.0 --port 8000 is running."""
     import socket
