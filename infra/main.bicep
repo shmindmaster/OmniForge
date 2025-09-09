@@ -85,7 +85,8 @@ resource web 'Microsoft.Web/sites@2023-01-01' = {
         { name: 'USE_ONNX'; value: '1' }
         { name: 'ENABLE_BLOB_UPLOAD'; value: '1' }
         { name: 'STORAGE_CONTAINER'; value: 'artifacts' }
-        { name: 'APP_ENV'; value: 'prod' }
+        { name: 'BLOB_CONTAINER'; value: 'im2fit-outputs' }
+        { name: 'APP_ENV'; value: 'demo' }
         { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'; value: appInsights.properties.ConnectionString }
       ]
       alwaysOn: true

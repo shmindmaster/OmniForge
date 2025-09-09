@@ -1,91 +1,49 @@
-# im2fit Prototype – FastAPI on Azure App Service
-
-**What this does**
-Upload a hand photo (with a printed 20 mm ArUco marker) → get back:
-
-- **Overlay PNG** showing segmentation + measurements (mm)
-- **CSV** with accurate millimeter metrics
-- **STL** 3D file of the nail contour
-
-All results are stored in **Azure Blob Storage** and returned as public URLs via the web response.
+Welcome to the **im2fit** project. This repository contains the source code for a modular and scalable computer vision and 3D modeling pipeline that transforms a simple 2D image into a custom-fit 3D model. While this project focuses on the beauty-tech industry, its core architecture is designed for a wide range of custom product manufacturing and design applications.
 
 ---
 
-## Features & Tech Stack
+## Business Value & Use Cases
 
-| Component             | Description                                                                                                                                      |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Web Framework**     | FastAPI, served via Gunicorn + Uvicorn                                                                                                           |
-| **Image Storage**     | Azure Blob Storage                                                                                                                               |
-| **Nail Segmentation** | Roboflow Hosted Instance Segmentation API (or swap to ONNX later)                                                                                |
-| **Scaling to mm**     | OpenCV ArUco marker detection ([OpenCV ArUco tutorial](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html?utm_source=chatgpt.com)) |
-| **STL Generation**    | Trimesh — trusted for 3D mesh exports ([Trimesh export docs](https://trimesh.org/trimesh.exchange.export.html?utm_source=chatgpt.com))           |
-| **Deployment**        | Azure App Service (Linux, Python) — fast and reliable                                                                                            |
-| **CI/CD**             | GitHub Actions (auto-deploy) or zip deployment                                                                                                   |
+This project demonstrates a robust, end-to-end solution for a significant business challenge: translating real-world, physical dimensions into digital, customizable products.
 
----
+### Value Proposition
 
-## 🆕 Quick Deploy (under 15 min)
+The pipeline provides:
 
-1. **Set up Azure resources**:
+- **Precision and Customization**: Replaces manual sizing with an automated, accurate computer vision system, ensuring a perfect fit for every customer.
+- **Scalability**: The system can process a high volume of images at a low cost, enabling mass production of personalized items.
+- **Efficiency**: The fully automated pipeline drastically reduces design time, allowing for faster product delivery and a more responsive supply chain.
+- **Enhanced User Experience**: Offers a seamless, interactive experience where users can see a digital preview of their custom product before it's created.
 
-   - Create **App Service (Linux, Python)**.
-   - Create **Storage Account** + **Blob container** (e.g., `im2fit-outputs`).
+### Broader Applications
 
-2. **Configure environment settings** in Azure Portal → _Configuration_:
+The underlying technology is broadly applicable to any industry that requires the conversion of 2D images to custom 3D products, such as:
 
-   - `AZURE_STORAGE_CONNECTION_STRING` (from Storage Account).
-   - `BLOB_CONTAINER` (e.g., `im2fit-outputs`).
-   - If using Roboflow: `ROBOFLOW_API_KEY`, `ROBOFLOW_INFER_URL`.
-   - (Optional) For local inference later: `USE_ONNX=1`, `ONNX_MODEL_PATH`.
-
-3. **Deploy code**:
-
-   - Connect Azure App Service to your GitHub repo or use zip deploy. Azure will handle installing dependencies via `requirements.txt`, and run the app with the startup command from `startup.txt`.
-
-4. **Test the live endpoint**:
-   - Visit `https://<your-app-name>.azurewebsites.net/docs`.
-   - Execute `POST /process` and upload a photo containing a **20 mm ArUco marker** printed at 100 %.
+- **Manufacturing**: Detecting and measuring product defects.
+- **Medical Devices**: Creating custom prosthetics or orthotics.
+- **Dental**: Designing custom crowns or aligners.
+- **Footwear**: Generating personalized shoe insoles.
 
 ---
 
-## Why This Works
+## Technical Stack & Capabilities
 
-- **Quick setup**: App Service auto-deploy + auto-detect Python apps. Gunicorn/Uvicorn setup is Azure-recommended. ([Microsoft Quickstart sample](https://github.com/Azure-Samples/msdocs-python-fastapi-webapp-quickstart?utm_source=chatgpt.com))
-- **Reliable segmentation**: Roboflow’s Hosted Instance Segmentation API gives instant polygon masks—no model ops or GPU. ([Roboflow hosting guide](https://docs.roboflow.com/deploy/serverless/instance-segmentation?utm_source=chatgpt.com))
-- **Accurate scaling**: Using OpenCV’s ArUco marker tutorial ensures precise mm-per-pixel measurements.
-- **STL export**: Trimesh reliably converts nail outlines into real-scale 3D models.
-- **Swappable backend**: You can switch to an ONNX-based segmentation pipeline (`USE_ONNX=1`) without changing the API or infrastructure.
+| Component                | Description                                                                                                                           |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| **Web Framework**        | **FastAPI** on **Python** with **Gunicorn** and **Uvicorn** for a high-performance, developer-friendly backend.                       |
+| **Image Processing**     | **OpenCV** & **Numpy** for industry-standard computer vision tasks, including accurate real-world scaling via ArUco marker detection. |
+| **Segmentation**         | A **YOLOv11** segmentation model exported to the `.onnx` format for fast, portable inference on CPU or GPU.                           |
+| **3D Modeling**          | **Trimesh** & **Shapely** to reliably convert 2D shapes into solid 3D meshes for manufacturing.                                       |
+| **Cloud Infrastructure** | **Azure App Service** and **Azure Blob Storage** for a scalable, cost-effective, and robust deployment.                               |
+| **DevOps**               | **Docker**, **GitHub Actions**, and **Azure Bicep** for automated, reproducible, and secure deployments.                              |
 
----
+### Project Capabilities
 
-## Running Locally
+This repository showcases:
 
-Set environment variables (one-time):
+- **End-to-end pipeline implementation**: From image upload to final 3D artifact generation.
+- **Expertise in image segmentation**: The core functionality of the pipeline relies on a custom-trained model for accurate finger/nail segmentation.
+- **Robust geometry inference**: The system normalizes input images to derive precise, real-world dimensions in millimeters.
+- **Proficiency with frameworks**: The project demonstrates hands-on experience with Python, OpenCV, PyTorch/TensorFlow (via ONNX), and 3D modeling libraries.
 
-Windows PowerShell:
-
-```powershell
-setx KAGGLE_CONFIG_DIR ".kaggle"
-```
-
-Linux / macOS:
-
-```bash
-export KAGGLE_CONFIG_DIR=.kaggle
-```
-
-Install deps & run:
-
-```bash
-make setup
-uvicorn app.main:app --reload --port 8000
-```
-
-### Segmentation Backend Options
-
-Option A (Fine-tune YOLO11 on Kaggle dataset): convert dataset → train → export ONNX → set `USE_ONNX=1`.
-
-Option B (Pretrained Weights Shortcut): download public pretrained nails segmentation weights (YOLOv8/YOLO11), export to ONNX, place at `model/best.onnx`, skip training.
-
-Both options produce the same runtime API.
+<br>

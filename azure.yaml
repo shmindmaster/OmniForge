@@ -13,4 +13,5 @@ services:
       USE_ONNX: 1
       ENABLE_BLOB_UPLOAD: 1
       STORAGE_CONTAINER: artifacts
-      APP_ENV: prod
+      BLOB_CONTAINER: im2fit-outputs
+      APP_ENV: demo
