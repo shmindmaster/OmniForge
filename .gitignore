@@ -49,7 +49,7 @@ model/*.onnx
 Thumbs.db
 
 # CI/CD & cloud configs
-.github/
+.github/Instructions
 .azure/
 .kaggle/
 
