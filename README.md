@@ -66,15 +66,13 @@ Set environment variables (one-time):
 Windows PowerShell:
 
 ```powershell
-setx KAGGLE_USERNAME "<your>"
-setx KAGGLE_KEY "<key>"
+setx KAGGLE_CONFIG_DIR ".kaggle"
 ```
 
 Linux / macOS:
 
 ```bash
-export KAGGLE_USERNAME=<your>
-export KAGGLE_KEY=<key>
+export KAGGLE_CONFIG_DIR=.kaggle
 ```
 
 Install deps & run:
