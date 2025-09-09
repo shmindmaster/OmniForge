@@ -8,11 +8,12 @@ from azure.storage.blob import BlobServiceClient, ContentSettings
 from .pipeline import run_pipeline
 
 BLOB_CONN = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
-BLOB_CONTAINER = os.environ.get("BLOB_CONTAINER", "im2fit-outputs")
+BLOB_CONTAINER = os.environ.get("BLOB_CONTAINER") or os.environ.get("STORAGE_CONTAINER", "im2fit-outputs")
 PUBLIC_ARTIFACT_PROXY = os.environ.get("PUBLIC_ARTIFACT_PROXY", "0") == "1"
 
+# Don't hard-fail at import for dev; enforce at first upload
 if not BLOB_CONN:
-    raise RuntimeError("AZURE_STORAGE_CONNECTION_STRING is not set")
+    print("WARNING: AZURE_STORAGE_CONNECTION_STRING not set; uploads will fail", flush=True)
 
 MODEL_HASH = None
 model_path = os.environ.get("ONNX_MODEL_PATH", "model/best.onnx")
@@ -52,6 +53,8 @@ def upload_bytes(name: str, data: bytes, content_type: str) -> str:
     cc = _blob_client()
     cc.upload_blob(name, data, overwrite=True,
                    content_settings=ContentSettings(content_type=content_type))
+    if PUBLIC_ARTIFACT_PROXY:
+        return f"/artifact/{name}"
     blob = cc.get_blob_client(name)
     return blob.url
 
