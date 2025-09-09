@@ -133,6 +133,14 @@ This repository demonstrates:
 
 <p align="center" class="muted">Left: input image; Middle: measured overlay; Right: generated STL.</p>
 
+<!-- Showcase -->
+<p align="center">
+  <img src="docs/showcase/aruco-calibration-1200x800.webp" alt="ArUco calibration: 20 mm marker detection and mm-per-pixel scaling" width="32%">
+  <img src="docs/showcase/segmentation-visual-1200x1200.webp" alt="Segmentation visual: target region mask used for geometry and metrics" width="32%">
+  <img src="docs/showcase/stl-hero-1200x900.webp" alt="STL hero: watertight model suitable for downstream manufacturing" width="32%">
+</p>
+<p align="center" class="muted">Calibration → Segmentation → 3D Output: the core AI-driven steps powering the pipeline.</p>
+
 <!-- KPI row -->
 <p align="center">
   <img src="docs/kpi/accuracy-mm.svg" alt="Measurement accuracy: illustrative bars in millimeters" width="48%">
