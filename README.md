@@ -124,21 +124,32 @@ This repository demonstrates:
 <!-- Hero -->
 
 ![2D to 3D millimeter-accurate pipeline](docs/banners/hero-1200x630.webp)
+
 <p align="center" class="muted">From a single photo to a millimeter-accurate 3D model.</p>
 
 <!-- Triptych -->
 
 ![Input → Measured Overlay → STL](docs/showcase/triptych-2700x900.webp)
+
 <p align="center" class="muted">Left: input image; Middle: measured overlay; Right: generated STL.</p>
 
-<!-- KPI row intentionally omitted until real benchmarks -->
+<!-- KPI row -->
+<p align="center">
+  <img src="docs/kpi/accuracy-mm.svg" alt="Measurement accuracy: illustrative bars in millimeters" width="48%">
+  <img src="docs/kpi/latency.svg" alt="Latency by backend: illustrative trend lines" width="48%">
+</p>
 
 <!-- Architecture -->
 
 ![Architecture: FastAPI + ONNX/Hosted + Azure](docs/diagrams/architecture.svg)
+
 <p align="center" class="muted">FastAPI orchestrates segmentation and scaling; artifacts are stored in Azure Blob.</p>
 
-<!-- UI placeholders omitted for now -->
+<!-- UI -->
+<p align="center">
+  <img src="docs/ui/upload.svg" alt="Upload screen placeholder" width="48%">
+  <img src="docs/ui/results.svg" alt="Results screen placeholder" width="48%">
+</p>
 
 > Download the 20 mm ArUco marker: [PNG](app/static/markers/aruco_20mm.png) (print at 100% scale)
 

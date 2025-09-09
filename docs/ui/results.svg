@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <defs>
+    <style><![CDATA[
+      .card { fill:#ffffff; stroke:#bdc3c7; stroke-width:2; rx:12; ry:12 }
+      .title { font: bold 24px Arial, sans-serif; fill:#2c3e50 }
+      .label { font: 16px Arial, sans-serif; fill:#2c3e50 }
+      .muted { font: 14px Arial, sans-serif; fill:#7f8c8d }
+      .btn { fill:#3498db }
+      .bg { fill:#f5f7fa }
+    ]]></style>
+  </defs>
+  <rect width="100%" height="100%" class="bg"/>
+  <rect x="100" y="120" width="1200" height="660" class="card"/>
+  <text x="700" y="170" text-anchor="middle" class="title">Results</text>
+  <text x="700" y="200" text-anchor="middle" class="muted">Overlay metrics and downloadable artifacts</text>
+  <rect x="160" y="230" width="520" height="460" class="card"/>
+  <text x="420" y="470" text-anchor="middle" class="label">Overlay Preview</text>
+  <rect x="720" y="230" width="520" height="300" class="card"/>
+  <text x="980" y="300" text-anchor="middle" class="label">Metrics (length, widths, mm/px, sharpness)</text>
+  <rect x="720" y="550" width="520" height="140" class="card"/>
+  <text x="980" y="610" text-anchor="middle" class="label">Downloads: overlay.png • measures.csv • model.stl</text>
+  <rect x="980" y="640" width="160" height="34" class="btn"/>
+  <text x="1060" y="665" text-anchor="middle" class="label" fill="#ffffff">Download All</text>
+</svg>

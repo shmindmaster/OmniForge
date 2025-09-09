@@ -13,11 +13,11 @@ WORKDIR /app
 COPY app/requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip && pip install -r /app/requirements.txt
 
-COPY app /app/app
+COPY app /app
 COPY model /app/model
 
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
 
-CMD ["gunicorn", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "app.app.main:app", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:8000"]

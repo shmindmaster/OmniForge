@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <defs>
+    <style><![CDATA[
+      .card { fill:#ffffff; stroke:#bdc3c7; stroke-width:2; rx:12; ry:12 }
+      .title { font: bold 24px Arial, sans-serif; fill:#2c3e50 }
+      .label { font: 16px Arial, sans-serif; fill:#2c3e50 }
+      .muted { font: 14px Arial, sans-serif; fill:#7f8c8d }
+      .btn { fill:#2ecc71 }
+      .bg { fill:#f5f7fa }
+    ]]></style>
+  </defs>
+  <rect width="100%" height="100%" class="bg"/>
+  <rect x="200" y="140" width="1000" height="620" class="card"/>
+  <text x="700" y="200" text-anchor="middle" class="title">Upload an Image</text>
+  <text x="700" y="240" text-anchor="middle" class="muted">Use the 20 mm ArUco marker for accurate scaling</text>
+  <rect x="450" y="300" width="500" height="280" class="card"/>
+  <text x="700" y="455" text-anchor="middle" class="label">Drop image here or click to browse</text>
+  <rect x="625" y="610" width="150" height="40" class="btn"/>
+  <text x="700" y="637" text-anchor="middle" class="label" fill="#ffffff">Process</text>
+</svg>
