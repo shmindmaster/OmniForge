@@ -15,9 +15,17 @@ if not BLOB_CONN:
     raise RuntimeError("AZURE_STORAGE_CONNECTION_STRING is not set")
 
 MODEL_HASH = None
-if os.path.exists(os.environ.get("ONNX_MODEL_PATH", "model/best.onnx")):
-    with open(os.environ.get("ONNX_MODEL_PATH", "model/best.onnx"), 'rb') as f:
-        MODEL_HASH = hashlib.sha256(f.read()).hexdigest()[:16]
+model_path = os.environ.get("ONNX_MODEL_PATH", "model/best.onnx")
+if os.path.exists(model_path):
+    try:
+        with open(model_path, 'rb') as f:
+            MODEL_HASH = hashlib.sha256(f.read()).hexdigest()[:16]
+    except Exception as e:
+        print(f"Warning: Could not read model file {model_path}: {e}")
+        MODEL_HASH = "no-model"
+else:
+    print(f"Warning: Model file {model_path} not found")
+    MODEL_HASH = "no-model"
 
 app = FastAPI(title="im2fit Prototype", version="0.1")
 
