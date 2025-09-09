@@ -8,6 +8,7 @@ __pycache__/
 # Environments
 .venv*/
 .env*
+.env
 .conda/
 .kaggle/
 .ipynb_checkpoints/
