@@ -10,8 +10,8 @@ services:
       path: .
       file: Dockerfile
     env:
-      USE_ONNX: 1
-      ENABLE_BLOB_UPLOAD: 1
-      STORAGE_CONTAINER: artifacts
-      BLOB_CONTAINER: im2fit-outputs
-      APP_ENV: demo
+  USE_ONNX: 0
+  PUBLIC_ARTIFACT_PROXY: 1
+  STORAGE_CONTAINER: artifacts
+  BLOB_CONTAINER: artifacts
+  APP_ENV: demo
