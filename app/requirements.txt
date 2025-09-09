@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+gunicorn
+python-multipart
+opencv-contrib-python
+numpy
+pandas
+pillow
+requests
+trimesh
+shapely
+azure-storage-blob
+ultralytics
+onnxruntime
+kaggle

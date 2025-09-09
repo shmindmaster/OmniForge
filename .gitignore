@@ -1,0 +1,71 @@
+# Python cache/compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Environments
+.venv*/
+.env*
+.conda/
+.kaggle/
+.ipynb_checkpoints/
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+*.manifest
+*.spec
+
+# Byte-compiled / cache
+.pytest_cache/
+.hypothesis/
+
+# Logs / debug / temp
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# VSCode / IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Data artifacts
+runs/
+model/*.onnx
+!model/best.onnx
+*.ckpt
+*.h5
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# CI/CD & cloud configs
+.github/
+.azure/
+.kaggle/
+
+# Coverage / testing
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Misc
+*.lock
+*.pid
+*.seed
+*.out
+
+# Data
+data
+
+Copilot-Processing.md
