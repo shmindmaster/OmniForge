@@ -40,7 +40,7 @@ templates = Jinja2Templates(directory="app/templates")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["*"], 
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -75,20 +75,20 @@ async def get_artifact(name: str = Path(...)):
     """Server-side proxy to stream blobs when PUBLIC_ARTIFACT_PROXY=1"""
     if not PUBLIC_ARTIFACT_PROXY:
         raise HTTPException(status_code=404, detail="Artifact proxy disabled")
-    
+
     try:
         cc = _blob_client()
         blob_client = cc.get_blob_client(name)
         blob_data = blob_client.download_blob()
-        
+
         # Get content type from blob properties
         props = blob_client.get_blob_properties()
         content_type = props.content_settings.content_type or "application/octet-stream"
-        
+
         def iterfile():
             for chunk in blob_data.chunks():
                 yield chunk
-                
+
         return StreamingResponse(iterfile(), media_type=content_type)
     except Exception as e:
         raise HTTPException(status_code=404, detail=f"Artifact not found: {e}")
@@ -97,9 +97,9 @@ async def get_artifact(name: str = Path(...)):
 async def process_image(file: UploadFile = File(...)):
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Upload an image file")
-    
+
     img_bytes = await file.read()
-    
+
     # Enforce file size ≤ 5 MB
     if len(img_bytes) > 5 * 1024 * 1024:
         raise HTTPException(status_code=400, detail="File size must be ≤ 5 MB")
