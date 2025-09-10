@@ -1,7 +1,8 @@
 import os, numpy as np, cv2, pandas as pd, requests, math, shapely.geometry as geom, shapely.ops as ops
-from .scale_aruco import mm_per_pixel_from_aruco
-from .overlay import draw_overlay
-from .to_3d import outline_to_stl_bytes
+from measure import pca_axis_metrics
+from scale_aruco import mm_per_pixel_from_aruco
+from overlay import draw_overlay
+from to_3d import outline_to_stl_bytes
 
 ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY")  # optional
 ROBOFLOW_INFER_URL = os.environ.get("ROBOFLOW_INFER_URL")  # e.g., https://infer.roboflow.com/<workspace>/<model>:predict
@@ -41,41 +42,14 @@ def _hosted_segmentation(img_bgr):
 
 def _onnx_segmentation(img_bgr):
     try:
-        from .onnx_infer import infer_mask
+        from onnx_infer import infer_mask
         return infer_mask(img_bgr)
     except Exception as e:
         print(f"ONNX segmentation failed: {e}")
         return None
 
 def _measure(mask, mm_per_px):
-    ys, xs = np.where(mask > 0)
-    contour = np.column_stack((xs, ys)).astype(np.float32)
-    mean_init = np.array([], dtype=np.float32)
-    mean, eigenvectors = cv2.PCACompute(contour, mean_init)
-    axis_vec = eigenvectors[0]
-    ortho_vec = eigenvectors[1]
-    centered = contour - mean
-    proj = centered @ axis_vec
-    ortho = centered @ ortho_vec
-    min_p, max_p = proj.min(), proj.max()
-    length_px = float(max_p - min_p)
-    length_mm = length_px * mm_per_px
-    def width_at(frac):
-        target = min_p + frac * (max_p - min_p)
-        band_mask = np.abs(proj - target) < 0.01 * length_px + 1.0  # adaptive thickness
-        if not np.any(band_mask):
-            return 0.0
-        span = ortho[band_mask]
-        return (span.max() - span.min()) * mm_per_px
-    width_prox_mm = width_at(0.25)
-    width_mid_mm = width_at(0.50)
-    width_dist_mm = width_at(0.75)
-    mask_area_px = int((mask > 0).sum())
-    # Sharpness metric via Laplacian variance on original mask edges
-    lap = cv2.Laplacian(mask, cv2.CV_32F)
-    sharpness = float(lap.var())
-    return dict(length_mm=length_mm, width_prox_mm=width_prox_mm, width_mid_mm=width_mid_mm, width_dist_mm=width_dist_mm,
-                mask_area_px=mask_area_px, sharpness=sharpness, axis_origin=mean.flatten().tolist(), axis_vec=axis_vec.tolist())
+    return pca_axis_metrics(mask, mm_per_px)
 
 def run_pipeline(image_bytes: bytes):
     img = _image_from_bytes(image_bytes)
@@ -96,7 +70,7 @@ def run_pipeline(image_bytes: bytes):
         mask[center_y-50:center_y+50, center_x-30:center_x+30] = 255
         print("Warning: Using dummy mask for testing - segmentation failed")
 
-    metrics = _measure(mask, mm_per_px)
+    metrics = _measure(mask, mm_per_px) or {}
     metrics.update({"mm_per_px": mm_per_px, "scale_confidence": scale_conf})
 
     overlay_png = draw_overlay(img, mask, metrics)

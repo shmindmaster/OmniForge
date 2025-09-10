@@ -12,3 +12,5 @@ shapely
 azure-storage-blob
 onnxruntime
 pyyaml
+jinja2
+ultralytics==8.3.0
