@@ -5,7 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from azure.storage.blob import BlobServiceClient, ContentSettings
-from .pipeline import run_pipeline
+try:
+    from .pipeline import run_pipeline
+except ImportError:
+    from pipeline import run_pipeline
 
 BLOB_CONN = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 BLOB_CONTAINER = os.environ.get("BLOB_CONTAINER") or os.environ.get("STORAGE_CONTAINER", "im2fit-outputs")

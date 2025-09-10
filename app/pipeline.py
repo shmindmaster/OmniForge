@@ -1,8 +1,17 @@
 import os, numpy as np, cv2, pandas as pd, requests, math, shapely.geometry as geom, shapely.ops as ops
-from measure import pca_axis_metrics
-from scale_aruco import mm_per_pixel_from_aruco
-from overlay import draw_overlay
-from to_3d import outline_to_stl_bytes
+
+try:
+    # Try relative imports first (when run as module)
+    from .measure import pca_axis_metrics
+    from .scale_aruco import mm_per_pixel_from_aruco
+    from .overlay import draw_overlay
+    from .to_3d import outline_to_stl_bytes
+except ImportError:
+    # Fall back to absolute imports (when run directly)
+    from measure import pca_axis_metrics
+    from scale_aruco import mm_per_pixel_from_aruco
+    from overlay import draw_overlay
+    from to_3d import outline_to_stl_bytes
 
 ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY")  # optional
 ROBOFLOW_INFER_URL = os.environ.get("ROBOFLOW_INFER_URL")  # e.g., https://infer.roboflow.com/<workspace>/<model>:predict
@@ -42,7 +51,10 @@ def _hosted_segmentation(img_bgr):
 
 def _onnx_segmentation(img_bgr):
     try:
-        from onnx_infer import infer_mask
+        try:
+            from .onnx_infer import infer_mask
+        except ImportError:
+            from onnx_infer import infer_mask
         return infer_mask(img_bgr)
     except Exception as e:
         print(f"ONNX segmentation failed: {e}")
