@@ -1,7 +1,10 @@
 # scripts\handsy_phase0.py
 from __future__ import annotations
-import os, csv, cv2, numpy as np
+import os, sys, csv, cv2, numpy as np
 from pathlib import Path
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 from app.onnx_infer import infer_mask
 from app.scale_aruco import mm_per_pixel_from_aruco
 from app.overlay import draw_overlay
@@ -92,7 +95,31 @@ def process_one(img_path: Path):
     overlay_png = draw_overlay(img, mask, m)
     (OUT_DIR / f"{base}_overlay.png").write_bytes(overlay_png)
     # (optional) STL for largest contour
-    return base, m
+    return base, m, mask
+
+def per_contour_rows(mask_clean, mmpp, scale_conf, image_base):
+    import cv2, numpy as np  # local to keep top-level lean
+    rows = []
+    cnts, _ = cv2.findContours((mask_clean>0).astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:4]
+    for idx, c in enumerate(cnts):
+        single = np.zeros_like(mask_clean, dtype=np.uint8)
+        cv2.drawContours(single, [c], -1, (255, 255, 255), -1)
+        m = measure(single, mmpp)
+        if not m:
+            continue
+        rows.append({
+            "image": image_base,
+            "nail_index": idx,
+            "length_mm": m["length_mm"],
+            "width_prox_mm": m["width_prox_mm"],
+            "width_mid_mm": m["width_mid_mm"],
+            "width_dist_mm": m["width_dist_mm"],
+            "mask_area_px": m["mask_area_px"],
+            "mm_per_px": mmpp,
+            "scale_confidence": scale_conf,
+        })
+    return rows
 
 def main():
     paths = [p for p in IN_DIR.glob("*.*") if p.suffix.lower() in {".jpg",".jpeg",".png",".bmp"}]
@@ -101,12 +128,19 @@ def main():
     csv_path = OUT_DIR / "measurements.csv"
     write_header = not csv_path.exists()
     with open(csv_path, "a", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["image","length_mm","width_prox_mm","width_mid_mm","width_dist_mm","mask_area_px","mm_per_px","scale_confidence"])
-        if write_header: w.writeheader()
+        w = csv.DictWriter(f, fieldnames=[
+            "image","nail_index","length_mm","width_prox_mm","width_mid_mm","width_dist_mm",
+            "mask_area_px","mm_per_px","scale_confidence"
+        ])
+        if write_header:
+            w.writeheader()
         for p in paths:
-            base, metrics = process_one(p)
-            row = {"image": base, **{k: metrics.get(k,"") for k in ["length_mm","width_prox_mm","width_mid_mm","width_dist_mm","mask_area_px","mm_per_px","scale_confidence"]}}
-            w.writerow(row)
+            base, metrics, mask_clean = process_one(p)
+            mmpp = metrics.get("mm_per_px")
+            scl = metrics.get("scale_confidence")
+            rows = per_contour_rows(mask_clean, mmpp, scl, base)
+            for r in rows:
+                w.writerow(r)
     print(f"✅ Wrote outputs to {OUT_DIR}")
 
 if __name__ == "__main__":
