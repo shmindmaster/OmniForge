@@ -11,8 +11,11 @@ def _get_session():
     if _SESSION is None:
         if not os.path.exists(_MODEL_PATH):
             raise FileNotFoundError(f"ONNX model not found at {_MODEL_PATH}")
-        providers = ["CPUExecutionProvider"]
-        _SESSION = ort.InferenceSession(_MODEL_PATH, providers=providers)
+        providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
+        try:
+            _SESSION = ort.InferenceSession(_MODEL_PATH, providers=providers)
+        except Exception:
+            _SESSION = ort.InferenceSession(_MODEL_PATH, providers=["CPUExecutionProvider"])
     return _SESSION
 
 def _preprocess(img_bgr: np.ndarray, size: int = 640):
