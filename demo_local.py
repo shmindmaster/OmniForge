@@ -22,6 +22,8 @@ def start_server(port: int = 8000) -> subprocess.Popen:
     
     # Set required environment variables for local testing
     env = os.environ.copy()
+    # NOTE: The following connection string uses a non-functional, placeholder account key ('ZGVtbw==' decodes to 'demo').
+    # This is for local testing only. Do NOT use this value in production or for real credentials.
     env.setdefault("AZURE_STORAGE_CONNECTION_STRING", "DefaultEndpointsProtocol=https;AccountName=demo;AccountKey=ZGVtbw==;EndpointSuffix=core.windows.net")
     env.setdefault("USE_ONNX", "1")
     env.setdefault("ONNX_MODEL_PATH", "model/best.onnx")
