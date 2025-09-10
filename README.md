@@ -205,6 +205,39 @@ Note: Force-pushing rewritten history will affect collaborators and CI. Coordina
 
 ## Roadmap
 
+## GPU Setup & Accelerated Training
+
+If you have an NVIDIA GPU (driver shows CUDA 12.x) you can enable accelerated training:
+
+```powershell
+# One-time: install CUDA-enabled PyTorch (cu128 wheel)
+./scripts/setup_cuda_torch.ps1
+
+# Full training + export + validation + submission artifacts
+./scripts/train_handsy_gpu.ps1
+```
+
+Custom parameters:
+
+```powershell
+./scripts/train_handsy_gpu.ps1 -Epochs 60 -Batch 24 -CloseMosaic 12 -Name handsy_exp1
+```
+
+Disable automatic escalation to medium backbone:
+
+```powershell
+./scripts/train_handsy_gpu.ps1 -NoEscalate
+```
+
+Artifacts produced:
+
+- Run directories: `runs/seg/<name>/` (metrics, weights)
+- ONNX model: `model/best.onnx`
+- Validation report: `model/onnx_validation_report.json`
+- Submission bundle: `handsy_phase0_submission.zip`
+
+If CUDA is not detected after install, confirm your virtual environment is active and re-run `setup_cuda_torch.ps1 -Force`.
+
 - GPU/Accelerated Inference: Optional CUDA/TensorRT container variant; model auto-discovery via environment.
 - Model Management: Versioned ONNX models, registry-backed download at startup, and `/models` version endpoint.
 - Storage Access: Managed identity + RBAC for blob access instead of connection strings.
