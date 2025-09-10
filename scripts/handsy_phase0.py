@@ -90,14 +90,16 @@ def process_one(img_path: Path):
     # save mask
     cv2.imencode(".png", mask)[1].tofile(str(OUT_DIR / f"{base}_mask.png"))
     # overlay
-    m = measure(mask, mmpp) or {}
-    m.update({"mm_per_px": mmpp, "scale_confidence": conf})
-    overlay_png = draw_overlay(img, mask, m)
+    base_metrics = measure(mask, mmpp) or {}
+    m_full = {**base_metrics,
+              "mm_per_px": mmpp,
+              "scale_confidence": conf,
+              "scale_method": method}
+    overlay_png = draw_overlay(img, mask, m_full)
     (OUT_DIR / f"{base}_overlay.png").write_bytes(overlay_png)
-    # (optional) STL for largest contour
-    return base, m, mask
+    return base, m_full, mask
 
-def per_contour_rows(mask_clean, mmpp, scale_conf, image_base):
+def per_contour_rows(mask_clean, mmpp, scale_conf, image_base, scale_method):
     import cv2, numpy as np  # local to keep top-level lean
     rows = []
     cnts, _ = cv2.findContours((mask_clean>0).astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -118,6 +120,7 @@ def per_contour_rows(mask_clean, mmpp, scale_conf, image_base):
             "mask_area_px": m["mask_area_px"],
             "mm_per_px": mmpp,
             "scale_confidence": scale_conf,
+            "scale_method": scale_method,
         })
     return rows
 
@@ -127,10 +130,16 @@ def main():
         print(f"No images in {IN_DIR}"); return
     csv_path = OUT_DIR / "measurements.csv"
     write_header = not csv_path.exists()
+    if csv_path.exists():
+        # if existing file lacks scale_method column, rotate it
+        first_line = csv_path.read_text(encoding="utf-8").splitlines()[:1]
+        if first_line and 'scale_method' not in first_line[0]:
+            csv_path.rename(csv_path.with_suffix('.csv.bak'))
+            write_header = True
     with open(csv_path, "a", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=[
             "image","nail_index","length_mm","width_prox_mm","width_mid_mm","width_dist_mm",
-            "mask_area_px","mm_per_px","scale_confidence"
+            "mask_area_px","mm_per_px","scale_confidence","scale_method"
         ])
         if write_header:
             w.writeheader()
@@ -138,7 +147,8 @@ def main():
             base, metrics, mask_clean = process_one(p)
             mmpp = metrics.get("mm_per_px")
             scl = metrics.get("scale_confidence")
-            rows = per_contour_rows(mask_clean, mmpp, scl, base)
+            method = metrics.get("scale_method")
+            rows = per_contour_rows(mask_clean, mmpp, scl, base, method)
             for r in rows:
                 w.writerow(r)
     print(f"✅ Wrote outputs to {OUT_DIR}")

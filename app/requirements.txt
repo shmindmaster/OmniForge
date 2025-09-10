@@ -10,7 +10,8 @@ requests
 trimesh
 shapely
 azure-storage-blob
-onnxruntime
+onnxruntime-gpu
 pyyaml
 jinja2
-ultralytics==8.3.0
+ultralytics
+transformers
