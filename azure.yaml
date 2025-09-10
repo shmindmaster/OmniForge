@@ -1,0 +1,63 @@
+# Azure Developer CLI (azd) configuration for im2fit
+name: im2fit
+metadata:
+  template: im2fit@0.0.1-beta
+
+# Services definition
+services:
+  web:
+    project: .
+    language: python
+    host: containerapp
+    docker:
+      path: ./Dockerfile
+      context: .
+
+# Hooks for deployment lifecycle
+hooks:
+  preprovision:
+    shell: sh
+    run: echo "Preparing Azure resources..."
+    continueOnError: false
+    
+  postdeploy:
+    shell: sh  
+    run: |
+      echo "Deployment completed successfully!"
+      echo "Application URL: $AZD_SERVICE_WEB_ENDPOINT_URL"
+    continueOnError: true
+
+# Infrastructure configuration
+infra:
+  provider: bicep
+  path: infra
+
+# Environment configuration
+env:
+  - name: APP_ENV
+    value: demo
+  - name: BLOB_CONTAINER  
+    value: im2fit-outputs
+  - name: USE_ONNX
+    value: "1"
+  - name: ONNX_MODEL_PATH
+    value: model/best.onnx
+  - name: PUBLIC_ARTIFACT_PROXY
+    value: "0"
+
+# Resource naming and tagging
+resourceGroup:
+  name: rg-im2fit-${AZURE_ENV_NAME}
+  location: ${AZURE_LOCATION}
+
+tags:
+  project: im2fit
+  environment: ${AZURE_ENV_NAME}
+  purpose: demo
+  
+# Deployment configuration  
+deployment:
+  parameters:
+    environmentName: ${AZURE_ENV_NAME}
+    location: ${AZURE_LOCATION}
+    principalId: ${AZURE_PRINCIPAL_ID}

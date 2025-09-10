@@ -1,0 +1,107 @@
+# Ultralytics YOLO Training Configuration for im2fit
+# Optimized settings for nail segmentation with RTX 3060
+
+# Model Configuration
+model: yolo11m-seg.pt  # YOLOv11 medium segmentation model
+task: segment
+
+# Dataset Configuration  
+data: data/roboflow/data.yaml
+nc: 1  # Number of classes (nail)
+
+# Training Parameters
+epochs: 40
+patience: 10  # Early stopping patience
+batch: -1     # Auto-detect optimal batch size
+imgsz: 640    # Input image size
+device: 0     # GPU device (0 for first GPU, 'cpu' for CPU)
+workers: 10   # Number of data loading workers
+seed: 42      # Random seed for reproducibility
+
+# Optimization Settings
+optimizer: AdamW
+lr0: 0.003        # Initial learning rate
+lrf: 0.01         # Final learning rate factor
+momentum: 0.937   # Momentum
+weight_decay: 0.01
+cos_lr: True      # Cosine learning rate scheduler
+warmup_epochs: 3.0
+warmup_momentum: 0.8
+warmup_bias_lr: 0.1
+
+# Data Loading & Caching
+cache: disk       # Cache images to disk for faster training
+deterministic: False  # Deterministic training (slower but reproducible)
+single_cls: True  # Single class training optimization
+
+# Augmentation Settings (optimized for nail images)
+# Mosaic augmentation
+mosaic: 0.7       # Probability of mosaic augmentation
+close_mosaic: 15  # Epochs to disable mosaic before end
+
+# Mixing augmentations
+mixup: 0.10       # Probability of mixup augmentation
+copy_paste: 0.0   # Probability of copy-paste augmentation
+
+# Geometric augmentations
+degrees: 5.0      # Rotation degrees (+/-)
+translate: 0.05   # Translation fraction
+scale: 0.10       # Scaling factor (+/-)
+shear: 0.0        # Shear degrees (+/-) 
+perspective: 0.0  # Perspective transform
+
+# Flip augmentations
+fliplr: 0.5       # Horizontal flip probability
+flipud: 0.0       # Vertical flip probability (disabled for nails)
+
+# Color augmentations
+hsv_h: 0.01       # HSV hue augmentation
+hsv_s: 0.40       # HSV saturation augmentation  
+hsv_v: 0.40       # HSV value augmentation
+erasing: 0.20     # Random erasing probability
+
+# Advanced Settings
+amp: True         # Automatic Mixed Precision training
+fraction: 1.0     # Dataset fraction to use (1.0 = full dataset)
+profile: False    # Profile ONNX and TensorRT speeds during training
+freeze: None      # Freeze layers (list of layer indices)
+
+# Validation Settings
+val: True         # Validate during training
+split: val        # Dataset split to use for validation
+save_period: 5    # Save checkpoint every N epochs
+rect: False       # Rectangular training (faster, may reduce accuracy)
+
+# Output Settings
+project: runs/segment  # Project directory
+name: im2fit_final_seg # Run name
+exist_ok: False   # Overwrite existing project/name
+pretrained: True  # Use pretrained weights
+verbose: True     # Verbose output
+plots: True       # Save training plots
+
+# Export Settings (for post-training)
+format: onnx      # Export format
+dynamic: True     # Dynamic ONNX export
+simplify: True    # Simplify ONNX model
+opset: 14         # ONNX opset version
+workspace: 4      # TensorRT workspace size (GB)
+nms: True         # Add NMS module to model
+
+# Loss Function Weights
+box: 7.5          # Box loss gain
+cls: 0.5          # Class loss gain  
+dfl: 1.5          # DFL loss gain
+seg: 12.0         # Segmentation loss gain (increased for nail precision)
+
+# Additional nail-specific optimizations
+# These settings are tuned for:
+# - High precision nail boundary detection
+# - Robust performance across different lighting
+# - Fast inference for real-time applications
+label_smoothing: 0.0  # Label smoothing epsilon
+nbs: 64               # Nominal batch size for normalization
+overlap_mask: True    # Masks should overlap during training
+mask_ratio: 4         # Mask downsample ratio
+dropout: 0.0          # Classifier dropout (fraction)
+val_period: 1         # Validation every N epochs

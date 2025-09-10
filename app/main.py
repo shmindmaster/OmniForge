@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from azure.storage.blob import BlobServiceClient, ContentSettings
-from pipeline import run_pipeline
+from .pipeline import run_pipeline
 
 BLOB_CONN = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 BLOB_CONTAINER = os.environ.get("BLOB_CONTAINER") or os.environ.get("STORAGE_CONTAINER", "im2fit-outputs")
@@ -31,10 +31,13 @@ else:
 app = FastAPI(title="im2fit Prototype", version="0.1")
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+import os
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # Setup Jinja2 templates
-templates = Jinja2Templates(directory="templates")
+templates_dir = os.path.join(os.path.dirname(__file__), "templates")
+templates = Jinja2Templates(directory=templates_dir)
 
 # CORS for same-origin and localhost
 app.add_middleware(
