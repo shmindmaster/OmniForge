@@ -22,6 +22,18 @@ Write-Host "--- Phase-0: Environment Hardening (venv) ---"
 & $Pip install onnxruntime-gpu "transformers[torch]" opencv-contrib-python pandas | Out-Null
 & $Pip install -r (Join-Path $RepoRoot 'app/requirements.txt') | Out-Null
 
+Write-Host "--- Phase-0: CUDA Sanity Check ---"
+@'
+import torch
+print("Torch:", torch.__version__, "CUDA:", torch.version.cuda, "is_available:", torch.cuda.is_available())
+print("device_count:", torch.cuda.device_count())
+if torch.cuda.is_available():
+  print("Current device:", torch.cuda.current_device())
+  print("Device name:", torch.cuda.get_device_name(0))
+else:
+  print("WARNING: CUDA not available - will use CPU")
+'@ | & $Python -
+
 Write-Host "--- Phase-0: Enabling TF32 + cuDNN benchmark ---"
 @'
 import torch
@@ -44,6 +56,7 @@ $TrainArgs = @{
   "epochs" = 40
   "patience" = 10
   "batch" = -1
+  "device" = 0  # Use GPU 0 if available, fallback to CPU
   "workers" = 10
   "cache" = 'disk'
   "optimizer" = 'AdamW'
