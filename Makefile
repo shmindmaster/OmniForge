@@ -17,8 +17,8 @@ setup:
 # 2. Train the robust YOLOv11-m-seg model with the final optimized recipe
 train:
 	@echo "--- Starting Final Optimized Training Run: $(RUN_NAME) ---"
-	yolo segment train model=yolov11m-seg.pt data="$(DATA_YAML)" ^
-	imgsz=640 epochs=40 patience=10 batch=-1 device=0 workers=10 ^
+	yolo segment train model=yolo11m-seg.pt data="$(DATA_YAML)" ^
+	imgsz=640 epochs=40 patience=10 batch=-1 device=0 workers=8 ^
 	cache=disk optimizer=AdamW cos_lr=True close_mosaic=15 deterministic=False ^
 	mixup=0.10 erasing=0.20 seed=42 plots=True name=$(RUN_NAME) project="runs/segment"
 
