@@ -64,9 +64,28 @@ jobs:
           subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Container Apps
+        id: deploy
         run: |
           az containerapp update \
             --name ${{ github.event.repository.name }} \
             --resource-group ${{ env.RESOURCE_GROUP }} \
             --image ${{ env.REGISTRY_URL }}/${{ github.event.repository.name }}:${{ github.sha }}
+          
+          if [ $? -ne 0 ]; then
+            echo "❌ Deployment failed"
+            exit 1
+          fi
+          
+          echo "✅ Deployment successful"
+
+      - name: Verify Deployment
+        if: success()
+        run: |
+          echo "🔍 Verifying deployment..."
+          az containerapp show \
+            --name ${{ github.event.repository.name }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --query "properties.runningStatus" -o tsv
+          
+          echo "✅ Container App is running"
 
