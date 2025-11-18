@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['nail']
+
+roboflow:
+  workspace: tutututu
+  project: nail_segmentation-jc9vy
+  version: 3
+  license: MIT
+  url: https://universe.roboflow.com/tutututu/nail_segmentation-jc9vy/dataset/3

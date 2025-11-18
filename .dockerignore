@@ -1,0 +1,14 @@
+__pycache__
+*.pyc
+.git
+.venv
+dist
+build
+data
+tests
+*.onnx
+!model/best.onnx
+*.stl
+*.csv
+*.log
+.azure

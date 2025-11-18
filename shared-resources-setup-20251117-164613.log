@@ -1,0 +1,16 @@
+[2025-11-17 16:48:09] [SUCCESS] Set repository secret: AZURE_STORAGE_BLOB_ENDPOINT
+[2025-11-17 16:48:09] [SUCCESS] Set repository secret: AZURE_STORAGE_CONNECTION_STRING
+[2025-11-17 16:48:10] [SUCCESS] Set repository secret: AZURE_OPENAI_ENDPOINT
+[2025-11-17 16:48:11] [SUCCESS] Set repository secret: AZURE_STORAGE_CONTAINER
+[2025-11-17 16:48:11] [SUCCESS] Set repository secret: AZURE_OPENAI_API_VERSION
+[2025-11-17 16:48:11] [WARN] Error setting repository secret COPILOT_MCP_AZURE_OPENAI_API_KEY: flag needs an argument: --body
+[2025-11-17 16:48:12] [SUCCESS] Set repository secret: AZURE_OPENAI_DEPLOYMENT
+[2025-11-17 16:48:12] [SUCCESS] Set repository secret: AZURE_STORAGE_ACCOUNT
+[2025-11-17 16:48:13] [SUCCESS] Set copilot environment secret: AZURE_STORAGE_BLOB_ENDPOINT
+[2025-11-17 16:48:13] [SUCCESS] Set copilot environment secret: AZURE_STORAGE_CONNECTION_STRING
+[2025-11-17 16:48:14] [SUCCESS] Set copilot environment secret: AZURE_OPENAI_ENDPOINT
+[2025-11-17 16:48:15] [SUCCESS] Set copilot environment secret: AZURE_STORAGE_CONTAINER
+[2025-11-17 16:48:15] [SUCCESS] Set copilot environment secret: AZURE_OPENAI_API_VERSION
+[2025-11-17 16:48:15] [WARN] Error setting copilot environment secret COPILOT_MCP_AZURE_OPENAI_API_KEY: flag needs an argument: --body
+[2025-11-17 16:48:16] [SUCCESS] Set copilot environment secret: AZURE_OPENAI_DEPLOYMENT
+[2025-11-17 16:48:17] [SUCCESS] Set copilot environment secret: AZURE_STORAGE_ACCOUNT

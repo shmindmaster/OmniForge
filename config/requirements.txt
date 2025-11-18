@@ -1,0 +1,48 @@
+# Core dependencies
+ultralytics>=8.1.0  # Updated for latest YOLO models
+# onnxruntime-gpu>=1.16.0  # Removed - using PyTorch-first approach
+opencv-contrib-python>=4.8.0  # For computer vision tasks
+pandas>=2.1.0  # For data processing
+numpy>=1.24.0  # Numerical computing
+shapely>=2.0.0  # For geometric operations
+trimesh>=3.23.0  # For 3D mesh processing
+pyyaml>=6.0.0  # For configuration files
+python-dotenv>=1.0.0  # For environment variables
+
+# Web framework
+fastapi>=0.104.0  # Web framework
+uvicorn[standard]>=0.24.0  # ASGI server
+jinja2>=3.1.0  # Templating
+python-multipart>=0.0.6  # For file uploads
+
+# Cloud and storage
+azure-storage-blob>=12.19.0  # Azure Blob Storage
+boto3>=1.28.0  # AWS S3 support (optional)
+google-cloud-storage>=2.10.0  # GCP Storage (optional)
+
+# Machine learning
+torch>=2.1.0  # PyTorch
+torchvision>=0.16.0  # For image processing
+transformers[torch]>=4.35.0  # For advanced ML features
+# onnx>=1.14.0  # Removed - using PyTorch-first approach
+
+# 3D processing
+pyvista>=0.40.0  # For 3D visualization
+pyglet>=2.0.0  # For 3D rendering
+
+# Development and testing
+pytest>=7.4.0
+pytest-cov>=4.1.0  # Test coverage
+black>=23.9.0  # Code formatting
+mypy>=1.5.0  # Type checking
+flake8>=6.1.0  # Linting
+
+# Documentation
+mkdocs>=1.5.0  # Documentation
+mkdocs-material>=9.4.0  # Documentation theme
+
+# Utilities
+tqdm>=4.66.0  # Progress bars
+loguru>=0.7.0  # Logging
+python-jose[cryptography]>=3.3.0  # JWT tokens for auth (future use)
+passlib[bcrypt]>=1.7.4  # Password hashing (future use)

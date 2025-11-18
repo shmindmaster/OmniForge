@@ -1,0 +1,4 @@
+[2025-11-17 17:06:59] [WARN] Excluding sensitive file: .env.local
+[2025-11-17 17:06:59] [WARN] Excluding sensitive file: shared-resources-setup-20251117-164613.log
+[2025-11-17 17:06:59] [INFO] Found 1 safe files to commit in OmniForge: .env.example
+[2025-11-17 17:06:59] [WARN] No files staged in OmniForge
